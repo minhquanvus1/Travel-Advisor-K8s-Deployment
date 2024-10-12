@@ -1,0 +1,7 @@
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : postgres-config
+data:
+  host : postgres
+  dbName: travel_advisor_prod_db

@@ -1,0 +1,77 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: travel-advisor-backend
+  labels:
+    name: travel-advisor-backend
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: travel-advisor-backend
+  type: LoadBalancer
+  
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-advisor-backend
+spec:
+  selector:
+    matchLabels:
+      app: travel-advisor-backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: travel-advisor-backend
+    spec:
+      containers:
+        - name: travel-advisor-backend
+          image: minhquanvus/travel_advisor_backend:03
+          ports:
+            - containerPort: 8080
+          resources:  # Add resource requests and limits here
+            requests:
+              memory: "512Mi"    # Request a minimum of 128Mi memory
+              cpu: "250m"        # Request 250m (0.25 CPU core)
+            limits:
+              memory: "1Gi"    # Limit memory usage to 256Mi
+              cpu: "500m"        # Limit CPU usage to 500m (0.5 CPU core)
+          env:   # Setting Environmental Variables
+            - name: RENDER_DB_HOST   # Setting Database host address from configMap
+              value: postgres-external-db-service
+            - name: RENDER_DB_NAME  # Setting Database name from configMap
+              value: travel_advisor_prod_db
+            - name: RENDER_DB_USERNAME  # Setting Database username from Secret
+              value: postgres
+            - name: RENDER_DB_PASSWORD
+              value: Sunghajung1
+            - name: RENDER_DB_PORT  # Setting Database username from Secret
+              value: "5432"
+            - name: OKTA_OAUTH2_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: auth0-secrets
+                  key: okta_oauth2_issuer
+            - name: OKTA_OAUTH2_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: auth0-secrets
+                  key: okta_oauth2_audience
+            - name: STRIPE_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secrets
+                  key: stripe_key_secret
+            - name: JWK_SET_URI
+              valueFrom:
+                secretKeyRef:
+                  name: auth0-secrets
+                  key: jwk_set_uri
+            - name: SPRING_PROFILES_ACTIVE
+              value: production
