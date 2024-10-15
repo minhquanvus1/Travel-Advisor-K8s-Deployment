@@ -6,7 +6,7 @@ metadata:
     app: postgres
 spec:
   type: ExternalName
-  externalName: travel-advisor-db-instance.c9saqwwe4ylw.us-east-2.rds.amazonaws.com
+  externalName: travel-advisor-prod-db-instance.c9saqwwe4ylw.us-east-2.rds.amazonaws.com
   ports:
     - port: 5432
       targetPort: 5432

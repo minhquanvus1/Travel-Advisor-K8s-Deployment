@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: travel-advisor-backend
-          image: minhquanvus/travel_advisor_backend:03
+          image: minhquanvus/travel_advisor_backend:08
           ports:
             - containerPort: 8080
           resources:  # Add resource requests and limits here
@@ -44,15 +44,50 @@ spec:
               cpu: "500m"        # Limit CPU usage to 500m (0.5 CPU core)
           env:   # Setting Environmental Variables
             - name: RENDER_DB_HOST   # Setting Database host address from configMap
-              value: postgres-external-db-service
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_host
             - name: RENDER_DB_NAME  # Setting Database name from configMap
-              value: travel_advisor_prod_db
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_dbName
             - name: RENDER_DB_USERNAME  # Setting Database username from Secret
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: postgres_username
             - name: RENDER_DB_PASSWORD
-              value: Sunghajung1
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: postgres_password
             - name: RENDER_DB_PORT  # Setting Database username from Secret
-              value: "5432"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_port
+            - name: PROD_REDIS_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis_host
+            - name: PROD_REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis_port
+            - name: PROD_REDIS_SSL_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis_ssl_enabled
+            - name: PROD_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: redis_password
             - name: OKTA_OAUTH2_ISSUER
               valueFrom:
                 secretKeyRef:

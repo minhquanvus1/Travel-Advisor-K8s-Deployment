@@ -3,5 +3,16 @@ kind : ConfigMap
 metadata:
   name : postgres-config
 data:
-  host : postgres
-  dbName: travel_advisor_prod_db
+  postgres_host : postgres-external-db-service
+  postgres_port : "5432"
+  postgres_dbName: travel_advisor_prod_db
+
+---
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : redis-config
+data:
+  redis_host : master.travel-advisor-redis-database.ndlf0b.use2.cache.amazonaws.com
+  redis_port : "6379"
+  redis_ssl_enabled: "true"
